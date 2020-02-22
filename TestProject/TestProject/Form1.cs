@@ -194,7 +194,8 @@ namespace TestProject
         private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
         {
             char number = e.KeyChar;
-            if (!Char.IsDigit(number) && number != 8)
+            if ((e.KeyChar <= 47 || e.KeyChar >= 58) && number != 8 && number != 59 && number != 32
+                )
             {
                 e.Handled = true;
             }
