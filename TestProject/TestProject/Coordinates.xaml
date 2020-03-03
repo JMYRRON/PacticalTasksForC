@@ -1,0 +1,23 @@
+﻿<Window x:Class="TestProject.Coordinates"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             ResizeMode="NoResize"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestProject"
+             xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" WindowStyle="ToolWindow" Closing="Window_Closing"  >
+    <Grid>
+        <esri:MapView x:Name="MyMapView" Margin="0,0,-0.4,-0.2">
+            <esri:Map>
+                <esri:Map.Basemap>
+                    <esri:Basemap Name="Basemap">
+                        <esri:ArcGISTiledLayer Name="World Topographic" Source="http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"/>
+                    </esri:Basemap>
+                </esri:Map.Basemap>
+            </esri:Map>
+        </esri:MapView>
+        <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="289"/>
+    </Grid>
+</Window>

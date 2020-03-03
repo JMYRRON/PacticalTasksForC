@@ -91,13 +91,14 @@
             // 
             // textBox5
             // 
+            this.textBox5.AllowDrop = true;
             this.textBox5.Location = new System.Drawing.Point(107, 220);
             this.textBox5.Margin = new System.Windows.Forms.Padding(4);
             this.textBox5.Multiline = true;
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(217, 56);
             this.textBox5.TabIndex = 4;
-            this.textBox5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox5_KeyPress);
+            this.textBox5.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBox5_MouseDoubleClick);
             // 
             // textBox6
             // 
@@ -243,7 +244,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(333, 96);
+            this.label9.Location = new System.Drawing.Point(340, 55);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(103, 17);
@@ -253,12 +254,12 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(340, 52);
+            this.label10.Location = new System.Drawing.Point(347, 95);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(85, 17);
+            this.label10.Size = new System.Drawing.Size(81, 17);
             this.label10.TabIndex = 19;
-            this.label10.Text = "Важливість:";
+            this.label10.Text = "Надійність:";
             // 
             // label11
             // 

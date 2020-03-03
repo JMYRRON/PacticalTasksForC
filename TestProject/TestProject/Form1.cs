@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
 using Microsoft.Office.Interop.Word;
 using Microsoft.Office.Tools.Ribbon;
 using System.IO.Compression;
@@ -14,17 +15,26 @@ using System.IO;
 using Application = Microsoft.Office.Interop.Word.Application;
 using Microsoft.Win32;
 using System.Globalization;
+using Esri.ArcGISRuntime.Mapping;
+using System.Reflection;
 
 namespace TestProject
 {
     public partial class Form1 : Form
     {
+        
+        
         static Application app = Globals.ThisAddIn.Application;
-        static Microsoft.Office.Interop.Word.Document doc = Globals.ThisAddIn.Application.ActiveDocument;
-
+        static Microsoft.Office.Interop.Word.Document doc = Globals.ThisAddIn.Application.ActiveDocument;        
+        static bool mapCounter = true;
+        
         public Form1()
         {
+            
+            
             InitializeComponent();
+            
+                        
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -50,91 +60,77 @@ namespace TestProject
             const string subkey = "MyRegistry";
             const string keyName = userRoot + "\\" + subkey;
 
-            //Додавання дати завантаженння
-            if (isDates())
+            if (checkObligatoryWindows())
             {
-                addDate();
-            }
-            else
-            {
-                doc.Variables.Add("dates", DateTime.Now);
-            }
+                //Додавання дати завантаженння
+                if (isDates())
+                {
+                    addDate();
+                }
+                else
+                {
+                    doc.Variables.Add("dates", DateTime.Now);
+                }
 
-            //Додавання поля "Від"
-            if (textBox1.Text.Length != 0)
-            {
+                //Додавання поля "Від"                
                 checkTextBox(textBox1, "from");
                 Registry.SetValue(keyName, "from", textBox1.Text);
-            }
-            else
-            {
-                MessageBox.Show("Fill the field 'Від'");
-            }
+                
 
-            //Додавання поля "хто завантажив"
-            if (textBox2.Text.Length != 0)
-            {
+                //Додавання поля "хто завантажив"
                 checkTextBox(textBox2, "loadedBy");
                 Registry.SetValue(keyName, "loadedBy", textBox2.Text);
-            }
-            else
-            {
-                MessageBox.Show("Fill the field 'Хто'");
-            }
 
-            //Додавання поля Важливість
-            
-            doc.Fields.Update();
-            //checkComboBox(comboBox1, "importance");
+                //Додавання поля Важливість            
+                doc.Fields.Update();
+                checkComboBox(comboBox1, "credibility");
 
-            //Додавання поля Достовірність
-            checkComboBox(comboBox2, "validity");
+                //Додавання поля Достовірність
+                checkComboBox(comboBox2, "reliability");
 
-            //Додавання поля Номер завдання
-            checkTextBox(textBox7, "code");
+                //Додавання поля Номер завдання
+                checkTextBox(textBox7, "code");
 
-            //Додавання поля ОР
-            checkTextBox(textBox4, "object");
+                //Додавання поля ОР
+                checkTextBox(textBox4, "object");
 
-            //Додавання поля Координати
-            checkTextBox(textBox5, "coordinates");
+                //Додавання поля Координати
+                checkTextBox(textBox5, "coordinates");
 
-            //Додавання поля Заголовок
-            if (textBox3.Text.Length != 0)
-            {
+                //Додавання поля Заголовок
                 checkTextBox(textBox3, "title");
-            }
-            else
-            {
-                MessageBox.Show("Fill the field 'Заголовок'");
-            }
 
-            //Додавання поля Теги
-            checkTextBox(textBox6, "tags");
+                //Додавання поля Теги
+                checkTextBox(textBox6, "tags");
 
-            //Додавання поля Текст
-            bool textFlag = true;
-            foreach (Variable var in doc.Variables)
-            {
-                if (var.Name.Equals("text"))
+                //Додавання поля Текст
+                bool textFlag = true;
+                foreach (Variable var in doc.Variables)
                 {
-                    var.Value.Replace(var.Value, doc.Content.Text);
-                    textFlag = false;
-                    break;
+                    if (var.Name.Equals("text"))
+                    {
+                        var.Value.Replace(var.Value, doc.Content.Text);
+                        textFlag = false;
+                        break;
+                    }
                 }
+                if (textFlag)
+                {
+                    doc.Variables.Add("text", doc.Content.Text);
+                }
+
+                //Додавання поля Країни
+                addStates(checkedListBox1, "states");
+
+                //Додавання поля Дата отримання
+                checkDateTimePicker(dateTimePicker1, "date");
+
+                //Відкриття вікну підтвердження реєстрації та закриття форми
+                MessageBox.Show("Реєстрація успішна");
+                this.Close();
             }
-            if (textFlag)
-            {
-                doc.Variables.Add("text", doc.Content.Text);
-            }
 
-            //Додавання поля Країни
-            addStates(checkedListBox1, "states");
-
-            //Додавання поля Дата отримання
-            checkDateTimePicker(dateTimePicker1, "date");
-
-
+            
 
 
         }
@@ -191,15 +187,14 @@ namespace TestProject
             }
         }
 
-        private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            char number = e.KeyChar;
-            if ((e.KeyChar <= 47 || e.KeyChar >= 58) && number != 8 && number != 59 && number != 32
-                )
-            {
-                e.Handled = true;
-            }
-        }
+        //private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
+        //{
+            //char number = e.KeyChar;
+            //if ((e.KeyChar <= 47 || e.KeyChar >= 58) && number != 8  && number != 32 && number != 59)
+            //{
+                //e.Handled = true;
+            //}
+        //}
 
         private void checkTextBox (TextBox box, string varName)
         {
@@ -302,7 +297,7 @@ namespace TestProject
                         checkedListBox1.Items.Add(region.DisplayName);
                     }
                     
-                } catch (ArgumentException ex)
+                } catch (ArgumentException)
                 {
                     continue;
                 }             
@@ -329,7 +324,7 @@ namespace TestProject
                         result = region.ThreeLetterISORegionName;
                     }                        
                 } 
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     continue;
                 }
@@ -351,6 +346,12 @@ namespace TestProject
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 2;
+
+            foreach (int checkedItemIndex in checkedListBox1.CheckedIndices)
+            {
+                checkedListBox1.SetItemChecked(checkedItemIndex, false);
+            }
+
         }
 
         private void textBox8_KeyPress(object sender, KeyPressEventArgs e)
@@ -358,7 +359,66 @@ namespace TestProject
             char letter = e.KeyChar;
             string result = textBox8.Text + letter;
             int index = checkedListBox1.FindString(result);
-            checkedListBox1.SetSelected(index, true);
+            try
+            {
+                checkedListBox1.SetSelected(index, true);
+            } catch (Exception)
+            {
+
+            }
+            
         }
+
+        private void textBox5_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (mapCounter)
+            {
+                Coordinates coordinates = new Coordinates(this);
+                coordinates.Show();
+                mapCounter = false;
+
+            }
+            else
+            {
+                MessageBox.Show("Карта відкрита");
+            }
+        }
+
+
+            public void setCoords (string coords)
+        {        
+            textBox5.Text = coords;
+        }
+
+        private bool checkObligatoryWindows()
+        {
+            bool flag = true;
+            
+            if (textBox1.Text.Length == 0)
+            {
+                MessageBox.Show("Заповніть поле 'Від'");
+                flag = false;
+            } 
+            else if (textBox2.Text.Length == 0)
+            {
+                MessageBox.Show("Заповніть поле 'Хто'");
+                flag = false;
+            }
+            else if (textBox3.Text.Length == 0)
+            {
+                MessageBox.Show("Заповніть поле 'Заголовок'");
+                flag = false;
+            }
+
+
+            return flag;
+        }
+
+        public static void changeMapCounter()
+        {
+            Form1.mapCounter = true;
+        }
+
+        
     }
 }
