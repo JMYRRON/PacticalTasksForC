@@ -35,7 +35,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <BootstrapperComponentsLocation>Relative</BootstrapperComponentsLocation>
     <BootstrapperComponentsUrl>F:\программирование\C#\TestProject\packages</BootstrapperComponentsUrl>
-    <PublishUrl>F:\программирование\C#\Project6\</PublishUrl>
+    <PublishUrl>F:\программирование\C#\setup\</PublishUrl>
     <InstallUrl />
     <TargetCulture>ru</TargetCulture>
     <ApplicationVersion>1.0.0.10</ApplicationVersion>
@@ -122,6 +122,9 @@
     <Reference Include="Accessibility" />
     <Reference Include="Esri.ArcGISRuntime, Version=100.7.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <HintPath>..\packages\Esri.ArcGISRuntime.WPF.100.7.0\lib\net461\Esri.ArcGISRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="Esri.ArcGISRuntime.Hydrography, Version=100.7.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esri.ArcGISRuntime.Hydrography.100.7.0\lib\net461\Esri.ArcGISRuntime.Hydrography.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -298,5 +301,7 @@
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Esri.ArcGISRuntime.WPF.100.7.0\build\net461\Esri.ArcGISRuntime.WPF.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Esri.ArcGISRuntime.WPF.100.7.0\build\net461\Esri.ArcGISRuntime.WPF.targets'))" />
+    <Error Condition="!Exists('..\packages\Esri.ArcGISRuntime.Hydrography.100.7.0\build\net461\Esri.ArcGISRuntime.Hydrography.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Esri.ArcGISRuntime.Hydrography.100.7.0\build\net461\Esri.ArcGISRuntime.Hydrography.targets'))" />
   </Target>
+  <Import Project="..\packages\Esri.ArcGISRuntime.Hydrography.100.7.0\build\net461\Esri.ArcGISRuntime.Hydrography.targets" Condition="Exists('..\packages\Esri.ArcGISRuntime.Hydrography.100.7.0\build\net461\Esri.ArcGISRuntime.Hydrography.targets')" />
 </Project>

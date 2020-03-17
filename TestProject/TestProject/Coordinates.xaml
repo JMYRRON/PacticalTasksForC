@@ -6,8 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TestProject"
              xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" WindowStyle="ToolWindow" Closing="Window_Closing"  >
+             mc:Ignorable="d" WindowStyle="ToolWindow" Closing="Window_Closing" Height="617.1" Width="1025.6"  >
     <Grid>
         <esri:MapView x:Name="MyMapView" Margin="0,0,-0.4,-0.2">
             <esri:Map>
@@ -18,6 +17,14 @@
                 </esri:Map.Basemap>
             </esri:Map>
         </esri:MapView>
-        <TextBox x:Name="TextBox1" HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="289"/>
+        <Button Content="-" HorizontalAlignment="Left" Margin="33,10,0,0" VerticalAlignment="Top" Width="23" Click="Button_Click"/>
+        <Button Content="+" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="23" Click="Button_Click_1"/>
+        <Button x:Name="MyHand" Content="Hand" HorizontalAlignment="Left" Margin="774,334,0,0" VerticalAlignment="Top" Width="47" Click="MyHand_Click" Height="47"/>
+        <Button x:Name="MyPoint" Content="Point" HorizontalAlignment="Left" Margin="821,334,0,0" VerticalAlignment="Top" Width="47" Height="47" Click="MyPoint_Click"/>
+        <Button x:Name="MyLine" Content="Line" HorizontalAlignment="Left" Margin="868,334,0,0" VerticalAlignment="Top" Width="47" Height="47" Click="MyLine_Click"/>
+        <Button x:Name="MyPoligon" Content="Polygon" HorizontalAlignment="Left" Margin="915,334,0,0" VerticalAlignment="Top" Width="47" Height="47" Click="MyPoligon_Click"/>
+        <Button x:Name="MyDelete" Content="Delete" HorizontalAlignment="Left" Margin="962,334,0,0" VerticalAlignment="Top" Width="47" Height="47" Click="MyDelete_Click"/>
+        <TextBox x:Name="MyTextBlock" Margin="774,10,10.2,276" TextWrapping="Wrap"/>
     </Grid>
+
 </Window>

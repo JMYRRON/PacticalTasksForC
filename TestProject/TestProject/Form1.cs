@@ -17,6 +17,9 @@ using Microsoft.Win32;
 using System.Globalization;
 using Esri.ArcGISRuntime.Mapping;
 using System.Reflection;
+using Esri.ArcGISRuntime.UI;
+using Esri.ArcGISRuntime.Geometry;
+using System.Text.RegularExpressions;
 
 namespace TestProject
 {
@@ -27,21 +30,28 @@ namespace TestProject
         static Application app = Globals.ThisAddIn.Application;
         static Microsoft.Office.Interop.Word.Document doc = Globals.ThisAddIn.Application.ActiveDocument;        
         static bool mapCounter = true;
+        string checkedStates;
         
+
         public Form1()
         {
             
             
             InitializeComponent();
             
-                        
+
+
         }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 2;
+            this.checkAndLoadVariables();
             loadStates();
+
+
             checkedListBox1.Sorted = true;
 
            
@@ -56,9 +66,9 @@ namespace TestProject
 
         private void button1_Click(object sender, EventArgs e)
         {
-            const string userRoot = "HKEY_CURRENT_USER";
-            const string subkey = "MyRegistry";
-            const string keyName = userRoot + "\\" + subkey;
+            //const string userRoot = "HKEY_CURRENT_USER";
+            //const string subkey = "MyRegistry";
+            //const string keyName = userRoot + "\\" + subkey;
 
             if (checkObligatoryWindows())
             {
@@ -74,25 +84,25 @@ namespace TestProject
 
                 //Додавання поля "Від"                
                 checkTextBox(textBox1, "from");
-                Registry.SetValue(keyName, "from", textBox1.Text);
+                Registry.CurrentUser.SetValue("from", textBox1.Text);
                 
 
                 //Додавання поля "хто завантажив"
                 checkTextBox(textBox2, "loadedBy");
-                Registry.SetValue(keyName, "loadedBy", textBox2.Text);
+                Registry.CurrentUser.SetValue("loadedBy", textBox2.Text);
 
                 //Додавання поля Важливість            
                 doc.Fields.Update();
-                checkComboBox(comboBox1, "credibility");
+                checkComboBox(comboBox1, "reliability");
 
                 //Додавання поля Достовірність
-                checkComboBox(comboBox2, "reliability");
+                checkComboBox(comboBox2, "sourceReliability");
 
                 //Додавання поля Номер завдання
                 checkTextBox(textBox7, "code");
 
                 //Додавання поля ОР
-                checkTextBox(textBox4, "object");
+                checkTextBox(textBox4, "objects");
 
                 //Додавання поля Координати
                 checkTextBox(textBox5, "coordinates");
@@ -286,6 +296,16 @@ namespace TestProject
 
         private void loadStates()
         {
+            string[] priviousStatesISO = new string[1];
+            bool flag = false;
+            if (checkedStates!=null)
+            {
+                flag = true;
+                priviousStatesISO = checkedStates.Split(';');                
+            }
+            
+
+
             CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
             foreach (CultureInfo culture in cultures)
             {
@@ -295,6 +315,16 @@ namespace TestProject
                     if (!(checkedListBox1.Items.Contains(region.DisplayName)))
                     {
                         checkedListBox1.Items.Add(region.DisplayName);
+                        if (flag)
+                        {
+                            foreach (string element in priviousStatesISO)
+                            {                                
+                                if (element.Trim().Equals(region.ThreeLetterISORegionName))
+                                {
+                                    checkedListBox1.SetItemChecked(checkedListBox1.Items.Count - 1, true);
+                                }
+                            }
+                        }
                     }
                     
                 } catch (ArgumentException)
@@ -305,6 +335,8 @@ namespace TestProject
             }
 
         }
+
+        
 
         private string getISO (string state)
         {
@@ -336,21 +368,23 @@ namespace TestProject
 
         private void button2_Click(object sender, EventArgs e)
         {
-            textBox1.Text = "";
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
-            textBox5.Text = "";
-            textBox6.Text = "";
-            textBox7.Text = "";
+            //textBox1.Text = "";
+            //textBox2.Text = "";
+            //textBox3.Text = "";
+            //textBox4.Text = "";
+            //textBox5.Text = "";
+            //textBox6.Text = "";
+            //textBox7.Text = "";
 
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 2;
+            //comboBox1.SelectedIndex = 0;
+            //comboBox2.SelectedIndex = 2;
 
-            foreach (int checkedItemIndex in checkedListBox1.CheckedIndices)
-            {
-                checkedListBox1.SetItemChecked(checkedItemIndex, false);
-            }
+            //foreach (int checkedItemIndex in checkedListBox1.CheckedIndices)
+            //{
+            //    checkedListBox1.SetItemChecked(checkedItemIndex, false);
+            //}
+
+            this.Close();
 
         }
 
@@ -373,7 +407,9 @@ namespace TestProject
         {
             if (mapCounter)
             {
+                closeCoordsPanel();
                 Coordinates coordinates = new Coordinates(this);
+                coordinates.setCoordsText(textBox5.Text);
                 coordinates.Show();
                 mapCounter = false;
 
@@ -385,9 +421,14 @@ namespace TestProject
         }
 
 
-            public void setCoords (string coords)
+        public void setCoords (string coords)
         {        
             textBox5.Text = coords;
+        }
+
+        public string getCoords()
+        {
+            return textBox5.Text;
         }
 
         private bool checkObligatoryWindows()
@@ -419,6 +460,169 @@ namespace TestProject
             Form1.mapCounter = true;
         }
 
-        
+        private void checkAndLoadVariables()
+        {
+            if (Registry.CurrentUser.GetValue("from")!=null)
+            {
+                textBox1.Text = (string)Registry.CurrentUser.GetValue("from");
+            }
+            if (Registry.CurrentUser.GetValue("loadedBy") != null)
+            {
+                textBox2.Text = (string)Registry.CurrentUser.GetValue("loadedBy");
+            }
+            foreach (Variable var in doc.Variables)
+            {
+                if (var.Name.Equals("title"))
+                {
+                    textBox3.Text = var.Value;
+                }
+                else if (var.Name.Equals("objects"))
+                {
+                    textBox4.Text = var.Value;
+                }
+                else if (var.Name.Equals("coordinates"))
+                {
+                    textBox5.Text = var.Value;
+                }
+                else if (var.Name.Equals("tags"))
+                {
+                    textBox6.Text = var.Value;
+                }
+                else if (var.Name.Equals("code"))
+                {
+                    textBox7.Text = var.Value;
+                }
+                else if (var.Name.Equals("date"))
+                {
+                    dateTimePicker1.Value = Convert.ToDateTime(var.Value);
+                }
+                else if (var.Name.Equals("reliability"))
+                {
+                    comboBox1.SelectedItem = var.Value;
+                }
+                else if (var.Name.Equals("sourceReliability"))
+                {
+                    comboBox2.SelectedItem = var.Value;
+                }
+                else if (var.Name.Equals("states"))
+                {
+                    checkedStates = var.Value;
+                }
+
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            
+            if (button3.Text.Equals(">"))
+            {
+                
+                panel1.Visible = true;
+                button3.Text = "<";
+                convertCoordinates(textBox5.Text);
+            } else
+            {
+                closeCoordsPanel();
+            }            
+        }
+
+        private void closeCoordsPanel()
+        {
+            textBox9.Text = "";
+            panel1.Visible = false;
+            button3.Text = ">";
+        }
+
+        private void convertCoordinates(string coordinates)
+        {
+            try
+            {
+                string[] coordsArray = coordinates.Split('\b');
+                try
+                {
+                    int pointIndex = 1;
+                    int lineIndex = 1;
+                    int polygonIndex = 1;
+                    foreach (string coord in coordsArray)
+                    {                        
+                        if (coord.Contains(@"x"))
+                        {
+                            string point = "Point №" + pointIndex + Environment.NewLine;
+                            Regex regex = new Regex(@"\-?\d+\.{1}\d+");
+                            MatchCollection matches = regex.Matches(coord);
+                            if (matches.Count > 0)
+                            {
+                                foreach (Match match in matches)
+                                    point+= match.Value + ";" + Environment.NewLine;
+
+                            }
+                            pointIndex++;
+                            textBox9.Text += point + Environment.NewLine + Environment.NewLine;
+                        }
+                        else if (coord.Contains("paths"))
+                        {
+                            string line = "Line №" + lineIndex + Environment.NewLine;
+                            int pointsCounter = 1;
+                            int pointNumber = 1;
+                            Regex regex = new Regex(@"\-?\d+\.{1}\d+");
+                            MatchCollection matches = regex.Matches(coord);
+                            if (matches.Count > 0)
+                            {
+                                foreach (Match match in matches)
+                                    if (pointsCounter == 1)
+                                    {
+                                        line += ">>Line point №" + pointNumber + Environment.NewLine;
+                                        line += ">>" + match.Value + Environment.NewLine;
+                                        pointNumber++;
+                                        pointsCounter = 2;
+                                    } else
+                                    {
+                                        line += ">>" + match.Value + Environment.NewLine;
+                                        pointsCounter = 1;
+                                    }
+                            }
+                            lineIndex++;
+                            textBox9.Text += line + Environment.NewLine + Environment.NewLine;
+                        }
+                        else if (coord.Contains("rings"))
+                        {
+                            string polygon = "Polygon №" + polygonIndex + Environment.NewLine;
+                            int pointsCounter = 1;
+                            int pointNumber = 1;
+                            Regex regex = new Regex(@"\-?\d+\.{1}\d+");
+                            MatchCollection matches = regex.Matches(coord);
+                            if (matches.Count > 0)
+                            {
+                                foreach (Match match in matches)
+                                    if (pointsCounter == 1)
+                                    {
+                                        polygon += ">> Polygon point №" + pointNumber + Environment.NewLine;
+                                        polygon += ">>" + match.Value + Environment.NewLine;
+                                        pointNumber++;
+                                        pointsCounter = 2;
+                                    }
+                                    else
+                                    {
+                                        polygon += ">>" + match.Value + Environment.NewLine;
+                                        pointsCounter = 1;
+                                    }
+                            }
+                            polygonIndex++;
+                            textBox9.Text += polygon + Environment.NewLine + Environment.NewLine;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+
+        }
     }
 }
