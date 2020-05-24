@@ -1,0 +1,15 @@
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\Collector.exe.config
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\Collector.exe.manifest
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\Collector.application
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\Collector.exe
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\Collector.pdb
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\DocumentFormat.OpenXml.dll
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\System.IO.Packaging.dll
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\DocumentFormat.OpenXml.xml
+F:\программирование\C#\Collector\Collector\Collector\bin\Release\System.IO.Packaging.xml
+F:\программирование\C#\Collector\Collector\Collector\obj\Release\Collector.csprojAssemblyReference.cache
+F:\программирование\C#\Collector\Collector\Collector\obj\Release\Collector.exe.manifest
+F:\программирование\C#\Collector\Collector\Collector\obj\Release\Collector.application
+F:\программирование\C#\Collector\Collector\Collector\obj\Release\Collector.csproj.CopyComplete
+F:\программирование\C#\Collector\Collector\Collector\obj\Release\Collector.exe
+F:\программирование\C#\Collector\Collector\Collector\obj\Release\Collector.pdb
